@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>solr demo</title>
+    <script src="./bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <!-- everything in one -->
+    <!-- <link rel="import" href="./solr.html"> -->
+    <!-- or get only the used components one-by-one -->
+    <link rel="import" href="./solr-base.html">
+    <link rel="import" href="./solr-searchfield.html">
+    <link rel="import" href="./solr-results.html">
+  </head>
+  <body>
+    <solr-base solr-url="https://repository.library.brown.edu/api/search/">
+      <solr-searchfield slot="search"></solr-searchfield>
+      <solr-results slot="results" docs="docs" style="padding-top: 25px;">
+        <template>
+          <div>
+            <span>#[[index]]</span>
+            <span>Title: [[item.primary_title]]</span>
+            <hr>
+          </div>
+        </template>
+      </solr-results>
+    </solr-base>
+  </body>
+</html>

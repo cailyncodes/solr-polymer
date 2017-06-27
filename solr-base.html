@@ -1,0 +1,29 @@
+<link rel="import" href="./bower_components/polymer/polymer-element.html">
+<link rel="import" href="./bower_components/app-route/app-route.html">
+<link rel="import" href="./bower_components/app-route/app-location.html">
+<link rel="import" href="./bower_components/iron-list/iron-list.html">
+<link rel="import" href="./solr-results.html">
+<link rel="import" href="./fetch-jsonp.html">
+
+<dom-module id="solr-base">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <app-location route="{{route}}" use-hash-as-path></app-location>
+    <app-route
+      route="{{route}}"
+      pattern="#?"
+      data="{{routeData}}"
+      tail="{{tail}}">
+    </app-route>
+    <slot name="search"></slot>
+    <slot name="results"></slot>
+
+  </template>
+
+  <script src="./solr-base.js"></script>
+</dom-module>

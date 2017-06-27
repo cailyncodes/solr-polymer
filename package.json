@@ -1,0 +1,11 @@
+{
+  "name": "solr-polymer",
+  "version": "0.0.1-alpha",
+  "main": "solr.html",
+  "author": "Cole Hansen <cole_hansen@brown.edu>",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {
+    "fetch-jsonp": "^1.1.1"
+  }
+}

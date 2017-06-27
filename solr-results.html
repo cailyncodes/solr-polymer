@@ -1,0 +1,27 @@
+<link rel="import" href="./bower_components/iron-list/iron-list.html">
+
+<dom-module id="solr-results">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      iron-list {
+        height: 400px;
+      }
+    </style>
+
+    <iron-list id="list"></iron-list>
+
+    <slot>
+      <template>
+        <div>
+          <span>[[index]] [[item.primary_title]]</span>
+        </div>
+      </template>
+    </slot>
+
+  </template>
+
+  <script src="./solr-results.js"></script>
+</dom-module>
