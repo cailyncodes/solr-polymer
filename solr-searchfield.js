@@ -18,7 +18,16 @@ class SolrSearchfield extends Polymer.Element {
 
   static get properties() {
     return {
-      searchQuery: String
+      searchQuery: String,
+      rows: Number,
+      showAdvanced : {
+        type: Boolean,
+        default: false
+      },
+      advanced : {
+        type: Boolean,
+        default: false
+      }
     }
   }
 
@@ -27,7 +36,11 @@ class SolrSearchfield extends Polymer.Element {
 
     // attach submit handlers
     this.attachSubmitBtnHandler();
+    this.attachSubmitEnterHandler();
     this.attachSubmitFormHandler();
+
+    // attach other handlers
+    this.attachToggleAdvancedHandler();
   }
 
   attachSubmitBtnHandler() {
@@ -41,17 +54,49 @@ class SolrSearchfield extends Polymer.Element {
     });
   }
 
+  attachSubmitEnterHandler() {
+    this.addEventListener('keypress', (e) => {
+      if (e.key == "Enter") {
+        e.preventDefault();
+        let form = this.$['searchForm'];
+        form.dispatchEvent(new CustomEvent('iron-form-presubmit'));
+        return false;
+      }
+    });
+  }
+
   attachSubmitFormHandler() {
     let searchForm = this.$['searchForm'];
 
     searchForm.addEventListener('iron-form-presubmit', (e) => {
       e.preventDefault();
-      let locationChangeEvent = new CustomEvent('search-submit', { bubbles: true, composed: true, detail: this.searchQuery });
-      this.dispatchEvent(locationChangeEvent);
-      return false;
+      if (!this.searchQuery) {
+        return false;
+      } else {
+        let searchOptions = {};
+        searchOptions.q = this.searchQuery || '';
+        searchOptions.wt = "json";
+        searchOptions.rows = this.rows || 10;
+        let locationChangeEvent = new CustomEvent('search-submit', { bubbles: true, composed: true, detail: searchOptions });
+        this.dispatchEvent(locationChangeEvent);
+        return false;
+      }
     });
   }
 
+  _displayAdvanced(advanced, showAdvanced) {
+    return advanced && showAdvanced;
+  }
+
+  attachToggleAdvancedHandler() {
+    let advancedBtn = this.$['advancedToggle'];
+
+    advancedBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.showAdvanced = !this.showAdvanced;
+      return false;
+    });
+  }
 
 //   jsonp(that.solrUrl, {params: that.buildSearchParams(), cache:true})
 //   .success(function(data) {

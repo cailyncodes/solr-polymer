@@ -12,19 +12,48 @@
     <link rel="import" href="./solr-base.html">
     <link rel="import" href="./solr-searchfield.html">
     <link rel="import" href="./solr-results.html">
+    <link rel="import" href="./bower_components/paper-item/paper-item.html">
+    <link rel="import" href="./bower_components/paper-card/paper-card.html">
+    <link rel="import" href="./bower_components/shadycss/apply-shim.html">
+    <link rel="import" href="./bower_components/polymer/lib/elements/dom-bind.html">
+    <style>
+    </style>
   </head>
   <body>
-    <solr-base solr-url="https://repository.library.brown.edu/api/search/">
-      <solr-searchfield slot="search"></solr-searchfield>
-      <solr-results slot="results" docs="docs" style="padding-top: 25px;">
-        <template>
-          <div>
-            <span>#[[index]]</span>
-            <span>Title: [[item.primary_title]]</span>
-            <hr>
-          </div>
+    <!-- <template slot="template">
+      <paper-card heading="" image="https://repository.library.brown.edu/iiif/image/[[item.pid]]/full/,70/0/default.jpg" alt="[[item.primary_title]]">
+        <div class="card-content">
+          <a target="_blank" rel="nofollow" href="//repository.library.brown.edu/studio/item/[[item.pid]]">
+          [[item.primary_title]]
+          </a>
+        </div>
+      </paper-card>
+    </template> -->
+    <article id="cont">
+      <h1 style="font-family:'Roboto','Noto',sans-serif;font-size:2em;margin:0 auto 10px auto;font-style:oblique;width:80%;text-align:center;">Solr Search Interface created by Declarative HTML via Polymer</h1>
+      <solr-base jsonp solr-url="https://repository.library.brown.edu/api/search/">
+        <template slot="search">
+          <solr-searchfield advanced search-query="{{searchQuery}}" rows="{{rows}}"></solr-searchfield>
         </template>
-      </solr-results>
-    </solr-base>
+        <template slot="results">
+          <solr-results results="[[results]]" items="[[results.response.docs]]">
+            <template>
+              <div style="width:100%; padding:3px;">
+                <paper-card style="width:100%; border: 1px #aaa solid;">
+                  <div class="card-content">
+                    <a style="font-size:1.1em;" target="_blank" rel="nofollow" href="//repository.library.brown.edu/studio/item/[[item.pid]]">
+                    [[item.primary_title]]
+                    </a>
+                    <p>Number <script>document</script></p>
+                    <p>[[item.object_type]]</p>
+                    <p>[[item.abstract]]</p>
+                  </div>
+                </paper-card>
+              </div>
+            </template>
+          </solr-results>
+        </template>
+      </solr-base>
+    </article>
   </body>
 </html>

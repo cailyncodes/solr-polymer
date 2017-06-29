@@ -7,14 +7,28 @@
   <template>
     <style>
       :host {
-        display: block;
+        /*flex: 0 1 24%;*/
       }
     </style>
 
-    <iron-form id="searchForm" method="get" action="#">
-      <paper-input value={{searchQuery}} name="q" label="Search Terms"></paper-input>
-      <paper-button id="searchSubmit" raised type="submit">Submit</paper-button>
-    </iron-form>
+    <section>
+      <iron-form id="searchForm" method="get" action="#">
+        <paper-input value={{searchQuery}} name="q" label="Search Terms"></paper-input>
+        <template is="dom-if" if="{{_displayAdvanced(advanced, showAdvanced)}}">
+          <paper-input value={{rows}} name="rows" label="Rows"></paper-input>
+        </template>
+
+        <paper-button id="advancedToggle" raised type="button">
+          <template is="dom-if" if="{{advanced}}">
+            <div>
+              <template is="dom-if" if="{{_displayAdvanced(advanced, showAdvanced)}}"><span>Disable</span></template>
+              Advanced Search
+            </div>
+          </template>
+        </paper-button>
+        <paper-button id="searchSubmit" raised type="submit">Submit</paper-button>
+      </iron-form>
+    </section>
 
   </template>
 

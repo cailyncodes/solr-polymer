@@ -1,25 +1,48 @@
 <link rel="import" href="./bower_components/iron-list/iron-list.html">
+<link rel="import" href="./bower_components/paper-item/paper-item.html">
+<link rel="import" href="./bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="./bower_components/paper-tabs/paper-tab.html">
 
 <dom-module id="solr-results">
   <template>
     <style>
       :host {
-        display: block;
+        /*flex: 0 1 74%;
+        margin-left: 2%;*/
       }
       iron-list {
-        height: 400px;
+        height: 500px;
       }
     </style>
 
-    <iron-list id="list"></iron-list>
+    <slot name="before">
+      <div style="padding-top: 8px; font-family:'Roboto', 'Noto', sans-serif; font-size: 1.75em">
+        Results ([[results.response.numFound]])
+      </div>
+    </slot>
 
     <slot>
-      <template>
-        <div>
-          <span>[[index]] [[item.primary_title]]</span>
+      <template id="result">
+          <paper-item><span>[[_resultsIndex(index, results)]] [[item.id]] [[item.title]] [[item.primary_title]]</span></paper-item>
+      </template>
+    </slot>
+    <iron-list id="list" items="{{items}}"></iron-list>
+
+    <slot name="after">
+      <template id="after">
+        <div style="width: 100px; margin: auto;">
+          <paper-tabs id="plain-tabs" selected="0" style="padding-top:15px; height:auto;" no-bar>
+            <paper-tab link>
+              <a href="[[prev]]" tabindex="-1">Previous</a>
+            </paper-tab>
+            <paper-tab link>
+              <a href="[[next]]" tabindex="-1">Next</a>
+            </paper-tab>
+          </paper-tabs>
         </div>
       </template>
     </slot>
+    <div id="afterContainer"></div>
 
   </template>
 

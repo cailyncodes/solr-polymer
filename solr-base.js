@@ -16,109 +16,132 @@ class SolrBase extends Polymer.Element {
 
   static get is() { return "solr-base"; }
 
-  static get JSONP_NOT_ENABLED() { return "JSONP_NOT_ENABLED_" + Math.ceil(Math.random() * 1000000).toString(); }
+  static get _DEFAULT_JSONP_ENABLED_CB() { return "DEFAULT_JSONP_ENABLED_CB_" + Math.ceil(Math.random() * 1000000).toString(); }
 
   static get properties() {
     return {
       solrUrl: String,
-      jsonp: {
+
+      route: Object,
+
+      results: Object,
+
+      searchQuery: {
         type: String,
-        default: SolrBase.JSONP_NOT_ENABLED
+        default: ""
       },
-      results: {
-        type: Object,
-        observer: 'resultsHandler'
+      rows: {
+        type: Number,
+        default: 10
       },
-      route: Object
+
+      jsonp: Boolean,
+      jsonpCallback: {
+        type: String,
+        default: SolrBase._DEFAULT_JSONP_ENABLED_CB
+      }
     }
   }
 
   static get observers() {
     return [
-      '_routeChanged(route.*)'
+      '_routeChanged(route.*)',
     ]
-  }
-
-  _routeChanged(changeRecord) {
-    console.log("hello");
-    this.children[0].searchQuery = this.route.path.substring(3);
-    this.search();
   }
 
   connectedCallback() {
     super.connectedCallback();
 
-    this.addEventListener('search-submit', this.searchSubmitHandler);
-    // this.addEventListener('results-changed', this.resultsHandler)
+    this.addEventListener('search-submit', this._searchSubmitHandler);
 
-    // window.t = Polymer.dom(this);
-    // Polymer.dom(this).node.children[1].shadowRoot.children[1].appendChild(Polymer.dom(this).node.children[1].children[1]);
-    // Polymer.dom(this).node.children[1].shadowRoot.children[1].items = this.results.docs;
-    if (this.route.path) {
-      this.children[0].searchQuery = this.route.path.substring(3);
-      this.search();
+    let searchTemplate;
+    if (searchTemplate = this.querySelector("template[slot='search']")) {
+      // user supplied
+      this.__searchInstance = this._stampTemplate(searchTemplate);
+      this.$.search.appendChild(this.__searchInstance);
+    } else {
+      // default
+      // this.$.search.appendChild(this.$("slot[name='search']").children[0]);
     }
+
+    let resultsTemplate;
+    if (resultsTemplate = this.querySelector("template[slot='results']")) {
+      // user supplied
+      this.__resultsInstance = this._stampTemplate(resultsTemplate);
+      this.$.results.appendChild(this.__resultsInstance);
+    } else {
+      // default
+      // this.$.search.appendChild(this.$("slot[name='search']").children[0]);
+    }
+    window.x = this;
   }
 
-  searchSubmitHandler(e) {
+  _searchSubmitHandler(e) {
     e.preventDefault();
 
     // trigger location change
-    let url = this.constructSearchURL(e.detail);
-    this.set('route.path', url);
-
-    // trigger search
-    this.search();
+    let urlQuery = this.constructSearchURL(e.detail);
+    this.set('route.path', urlQuery);
 
     return false;
   }
 
-  constructSearchURL(query) {
-    let url = "?q=";
-    console.log(query);
-    url += encodeURI(query);
-    return url;
+  constructSearchURL(opts) {
+    let queryString = new URLSearchParams("");
+    for (let opt in opts) {
+      queryString.append(opt, opts[opt]);
+    }
+    return `?${queryString.toString()}`;
   }
 
   search() {
-    // dispatch ajax request to solr
-    console.log("route");
-    console.log(this.route);
+    // dispatch ajax request to solr if there is a search param
+    if (this.route.path != "") {
+      let url = this.solrUrl + this.route.path;
 
-    let url = this.solrUrl + this.route.path;
-    console.log(url);
+      let fetchReponse;
 
-    // if (this.jsonp == SolrBase.JSONP_NOT_ENABLED) {
-    //   console.log("not jsonp");
-    //   // let req = new Request(url);
-    //   // let headers = new Headers();
-    //   // headers.append('Content-Type', 'application/json');
-    //   // let init = {
-    //   //   method: 'GET',
-    //   //   headers: headers,
-    //   //   mode: 'cors',
-    //   //   cache: 'default'
-    //   // };
-    // } else {
-      fetchJsonp(url, {
-        jsonpCallbackFunction: this.jsonp
-      })
+      if (!this.jsonp) {
+        let req = new Request(url);
+        let headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        let init = {
+          method: 'GET',
+          headers: headers,
+          mode: 'cors',
+          cache: 'default'
+        };
+        fetchReponse = fetch(req, init);
+      } else {
+        fetchReponse = fetchJsonp(url, {
+          jsonpCallbackFunction: this.jsonpCallback
+        });
+      }
+
+      fetchReponse
       .then((response) => {
+        // this also returns a promise
         return response.json();
       })
       .then((data) => {
-        this.results = data.response;
-        return true;
+        this.results = data;
+        return;
       })
       .catch((err) => {
         console.log(err);
         alert("There was an error fetching your search results. Please try again.");
       });
-    // }
+    }
   }
 
-  resultsHandler(e) {
-    this.children[1]._updateResults(this.results);
+  _routeChanged(route) {
+    // update the search fields based on url
+    let urlParams = new URLSearchParams(route.value.path);
+    this.searchQuery = urlParams.get("q");
+    this.rows = urlParams.get("rows");
+
+    // trigger search
+    this.search();
   }
 }
 

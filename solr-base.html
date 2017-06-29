@@ -1,15 +1,25 @@
 <link rel="import" href="./bower_components/polymer/polymer-element.html">
 <link rel="import" href="./bower_components/app-route/app-route.html">
 <link rel="import" href="./bower_components/app-route/app-location.html">
-<link rel="import" href="./bower_components/iron-list/iron-list.html">
-<link rel="import" href="./solr-results.html">
 <link rel="import" href="./fetch-jsonp.html">
 
 <dom-module id="solr-base">
   <template>
     <style>
       :host {
-        display: block;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-start;
+      }
+
+      #search {
+        flex: 0 1 24%;
+      }
+
+      #results {
+        flex: 0 1 74%;
+        margin-left: 2%;
       }
     </style>
 
@@ -20,8 +30,12 @@
       data="{{routeData}}"
       tail="{{tail}}">
     </app-route>
-    <slot name="search"></slot>
-    <slot name="results"></slot>
+
+    <div id="search"></div>
+    <slot name="search">Search</slot>
+
+    <div id="results"></div>
+    <slot name="results">Results</slot>
 
   </template>
 
