@@ -1,0 +1,28 @@
+<link rel="import" href="./bower_components/polymer/polymer-element.html">
+<link rel="import" href="./bower_components/polymer/lib/elements/dom-repeat.html">
+
+<dom-module id="solr-facet-list">
+  <template>
+    <style>
+      :host {
+        /*flex: 0 1 24%;*/
+        font-family:'Roboto','Noto',sans-serif;
+      }
+      .label {
+        font-size: 1.3rem;
+        margin: 10px 0;
+      }
+    </style>
+
+    <section>
+      <h2 class="label">[[label]]</h2>
+      <template is="dom-repeat" items="[[facetAssociativeMap(results)]]">
+        <span><a href="[[facetLink(item)]]">[[item.field]] <em>([[item.count]])</em></a></span><br>
+      </template>
+      <paper-button><a href="[[removeFacetFilterLink(results)]]">Clear</a></paper-button>
+    </section>
+
+  </template>
+
+  <script src="./solr-facet-list.js"></script>
+</dom-module>

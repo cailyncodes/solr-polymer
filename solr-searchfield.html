@@ -14,18 +14,20 @@
     <section>
       <iron-form id="searchForm" method="get" action="#">
         <paper-input value={{searchQuery}} name="q" label="Search Terms"></paper-input>
+
         <template is="dom-if" if="{{_displayAdvanced(advanced, showAdvanced)}}">
           <paper-input value={{rows}} name="rows" label="Rows"></paper-input>
         </template>
 
-        <paper-button id="advancedToggle" raised type="button">
-          <template is="dom-if" if="{{advanced}}">
+        <!-- <template is="dom-if" if="{{advanced}}"> -->
+          <paper-button id="advancedToggle" raised type="button">
             <div>
               <template is="dom-if" if="{{_displayAdvanced(advanced, showAdvanced)}}"><span>Disable</span></template>
               Advanced Search
             </div>
-          </template>
-        </paper-button>
+          </paper-button>
+        <!-- </template> -->
+
         <paper-button id="searchSubmit" raised type="submit">Submit</paper-button>
       </iron-form>
     </section>

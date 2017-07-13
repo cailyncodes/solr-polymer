@@ -33,7 +33,6 @@ class SolrResults extends Polymer.Element {
 
   connectedCallback() {
     super.connectedCallback();
-    window.t1 = this;
 
     // after
     let afterTemplate;
@@ -55,7 +54,7 @@ class SolrResults extends Polymer.Element {
     }
   }
 
-  static _resultsIndex(index, results) {
+  _resultsIndex(index, results) {
     // return the 1-based index in the total results block
     return index + parseInt(results.response.start) + 1;
   }

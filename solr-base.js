@@ -35,6 +35,13 @@ class SolrBase extends Polymer.Element {
         default: 10
       },
 
+      facet: {
+        type: Boolean,
+        default: false
+      },
+      facetListFields: Array,
+      facetNumberRangesFields: Array,
+
       jsonp: Boolean,
       jsonpCallback: {
         type: String,
@@ -51,6 +58,36 @@ class SolrBase extends Polymer.Element {
 
   connectedCallback() {
     super.connectedCallback();
+
+    if (this.facet) {
+      this.addEventListener('facet-list-init', (e) => {
+        let facetListKeys = this.facetListFields || [];
+        facetListKeys.push(e.detail.key);
+        this.set('facetListFields', facetListKeys);
+      });
+      this.addEventListener('facet-number-range-init', (e) => {
+        console.log("init");
+        let facetNumberRangesKeys = this.facetNumberRangesFields || [];
+        facetNumberRangesKeys.push(e.detail.key);
+        this.set('facetNumberRangesFields', facetNumberRangesKeys);
+        console.log(this.facetNumberRangesFields);
+      });
+      this.addEventListener('facet-number-range-update', (e) => {
+        // console.log("updating");
+        // let facetNumberRanges = this.facetNumberRanges || [];
+        // let index = facetNumberRanges.indexOf(facetNumberRanges.find((range) => {
+        //   console.log(range.key == e.detail.key);
+        //   return range.key == e.detail.key;
+        // }));
+        // if (index == -1) {
+        //   return;
+        // } else {
+        // facetNumberRanges[index] = e.detail;
+        // this.set('facetNumberRanges', facetNumberRanges);
+        // console.log(this.facetNumberRanges);
+        this.set('route.path', e.detail.url);
+      });
+    }
 
     this.addEventListener('search-submit', this._searchSubmitHandler);
 
@@ -73,7 +110,6 @@ class SolrBase extends Polymer.Element {
       // default
       // this.$.search.appendChild(this.$("slot[name='search']").children[0]);
     }
-    window.x = this;
   }
 
   _searchSubmitHandler(e) {
@@ -90,6 +126,18 @@ class SolrBase extends Polymer.Element {
     let queryString = new URLSearchParams("");
     for (let opt in opts) {
       queryString.append(opt, opts[opt]);
+    }
+    if (this.facet && this.facetListFields) {
+      queryString.append('facet', 'on');
+      queryString.append('facet.mincount', '1');
+      for (let facetListField of this.facetListFields) {
+        queryString.append('facet.field', facetListField);
+      }
+    }
+    if (this.facet && this.facetNumberRangesFields) {
+      for (let rangeField of this.facetNumberRangesFields) {
+        queryString.append('facet.range', rangeField);
+      }
     }
     return `?${queryString.toString()}`;
   }
@@ -124,6 +172,7 @@ class SolrBase extends Polymer.Element {
         return response.json();
       })
       .then((data) => {
+        window.d = data;
         this.results = data;
         return;
       })
@@ -136,10 +185,9 @@ class SolrBase extends Polymer.Element {
 
   _routeChanged(route) {
     // update the search fields based on url
-    let urlParams = new URLSearchParams(route.value.path);
-    this.searchQuery = urlParams.get("q");
-    this.rows = urlParams.get("rows");
-
+    let urlParams = new URLSearchParams(route.value.path || route.value);
+    this.set('searchQuery', urlParams.get("q"));
+    this.set('rows', urlParams.get("rows"));
     // trigger search
     this.search();
   }

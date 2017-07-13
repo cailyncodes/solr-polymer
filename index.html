@@ -11,6 +11,8 @@
     <!-- or get only the used components one-by-one -->
     <link rel="import" href="./solr-base.html">
     <link rel="import" href="./solr-searchfield.html">
+    <link rel="import" href="./solr-facet-list.html">
+    <link rel="import" href="./solr-facet-number-range.html">
     <link rel="import" href="./solr-results.html">
     <link rel="import" href="./bower_components/paper-item/paper-item.html">
     <link rel="import" href="./bower_components/paper-card/paper-card.html">
@@ -20,40 +22,52 @@
     </style>
   </head>
   <body>
-    <!-- <template slot="template">
-      <paper-card heading="" image="https://repository.library.brown.edu/iiif/image/[[item.pid]]/full/,70/0/default.jpg" alt="[[item.primary_title]]">
-        <div class="card-content">
-          <a target="_blank" rel="nofollow" href="//repository.library.brown.edu/studio/item/[[item.pid]]">
-          [[item.primary_title]]
-          </a>
+    <h1 style="font-family:'Roboto','Noto',sans-serif;font-size:2em;margin:0 auto 10px auto;font-style:oblique;width:80%;text-align:center;">Solr Search Interface created by Declarative HTML via Polymer</h1>
+    <solr-base jsonp facet solr-url="https://repository.library.brown.edu/api/search/">
+      <template slot="search">
+        <solr-searchfield advanced search-query="[[searchQuery]]" rows="[[rows]]"></solr-searchfield>
+        <span><h1 style="font-family:'Roboto','Noto',sans-serif;margin:10px auto 10px auto;font-style:oblique;width:80%;text-align:center;">Facet List</h1></span>
+        <div style="overflow: auto; height: 450px;">
+          <solr-facet-list label="Object Type" key="object_type" results="[[results]]" facets="[[results.facet_counts]]"></solr-facet-list>
+          <solr-facet-list label="Type of Resource" key="mods_type_of_resource" results="[[results]]" facets="[[results.facet_counts]]"></solr-facet-list>
+          <solr-facet-list label="Keyword" key="mods_subject_ssim" results="[[results]]" facets="[[results.facet_counts]]"></solr-facet-list>
+          <!-- <solr-facet-number-range key="ir_collection_id" always-show-pin min="0" max="1000" step="100" label="Collection ID" results="[[results]]" facets="[[results.facet_counts]]"></solr-facet-number-range> -->
         </div>
-      </paper-card>
+      </template>
+      <template slot="results">
+        <solr-results results="[[results]]" items="[[results.response.docs]]">
+          <template>
+            <div style="width:100%; padding:3px;">
+              <paper-card style="width:100%; border: 1px #aaa solid;">
+                <div class="card-content">
+                  <a style="font-size:1.1em;" target="_blank" rel="nofollow" href="//repository.library.brown.edu/studio/item/[[item.pid]]">
+                  [[item.primary_title]]
+                  </a>
+                  <p>Number <script>document</script></p>
+                  <p>[[item.object_type]]</p>
+                  <p>[[item.abstract]]</p>
+                </div>
+              </paper-card>
+            </div>
+          </template>
+        </solr-results>
+      </template>
+    </solr-base>
+
+
+    <!-- <template>
+      <div style="width:100%; padding:3px;">
+        <paper-card style="width:100%; border: 1px #aaa solid;">
+          <div class="card-content">
+            <a style="font-size:1.1em;" target="_blank" rel="nofollow" href="//repository.library.brown.edu/studio/item/[[item.pid]]">
+            [[item.primary_title]]
+            </a>
+            <p>Number <script>document</script></p>
+            <p>[[item.object_type]]</p>
+            <p>[[item.abstract]]</p>
+          </div>
+        </paper-card>
+      </div>
     </template> -->
-    <article id="cont">
-      <h1 style="font-family:'Roboto','Noto',sans-serif;font-size:2em;margin:0 auto 10px auto;font-style:oblique;width:80%;text-align:center;">Solr Search Interface created by Declarative HTML via Polymer</h1>
-      <solr-base jsonp solr-url="https://repository.library.brown.edu/api/search/">
-        <template slot="search">
-          <solr-searchfield advanced search-query="{{searchQuery}}" rows="{{rows}}"></solr-searchfield>
-        </template>
-        <template slot="results">
-          <solr-results results="[[results]]" items="[[results.response.docs]]">
-            <template>
-              <div style="width:100%; padding:3px;">
-                <paper-card style="width:100%; border: 1px #aaa solid;">
-                  <div class="card-content">
-                    <a style="font-size:1.1em;" target="_blank" rel="nofollow" href="//repository.library.brown.edu/studio/item/[[item.pid]]">
-                    [[item.primary_title]]
-                    </a>
-                    <p>Number <script>document</script></p>
-                    <p>[[item.object_type]]</p>
-                    <p>[[item.abstract]]</p>
-                  </div>
-                </paper-card>
-              </div>
-            </template>
-          </solr-results>
-        </template>
-      </solr-base>
-    </article>
   </body>
 </html>

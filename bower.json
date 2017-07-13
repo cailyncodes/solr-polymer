@@ -30,7 +30,8 @@
     "iron-list": "PolymerElements/iron-list#^2.0.3",
     "paper-item": "PolymerElements/paper-item#^2.0.0",
     "paper-tabs": "PolymerElements/paper-tabs#^2.0.0",
-    "paper-card": "PolymerElements/paper-card#^2.0.0"
+    "paper-card": "PolymerElements/paper-card#^2.0.0",
+    "paper-range-slider": "git://github.com/zpv/paper-range-slider"
   },
   "resolutions": {
     "webcomponentsjs": "^v1.0.0",
